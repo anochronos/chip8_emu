@@ -1,12 +1,14 @@
 #pragma once
 
 class chip8{
+    static constexpr int MEM_SIZE = 4096; 
+    static constexpr int START_ADD = 0x200;
 
     // 35 opcodes of length 2 bytes
     unsigned short opcode;
 
     // total memory is 4k
-    unsigned char memory[4096];
+    unsigned char memory[MEM_SIZE];
 
     // 16 registers 
     unsigned char V[16];
