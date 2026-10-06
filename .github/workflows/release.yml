@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags: [ "v*" ]
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-ninja
+            mingw-w64-ucrt-x86_64-SDL2
+
+      - name: Build and collect files
+        shell: msys2 {0}
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+          mkdir dist
+          cp build/chip8.exe dist/
+          # Copy every DLL the exe needs from the MSYS2 folder (SDL2 and the compiler runtime)
+          ldd build/chip8.exe | grep -i /ucrt64/ | awk '{print $3}' | xargs -I{} cp {} dist/
+          cp README.md LICENSE dist/
+
+      - name: Zip
+        shell: pwsh
+        run: Compress-Archive -Path dist/* -DestinationPath chip8-windows-x64.zip
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: chip8-windows-x64.zip
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libsdl2-dev cmake
+
+      - name: Build and package
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+          mkdir dist
+          cp build/chip8 README.md LICENSE dist/
+          tar -czf chip8-linux-x64.tar.gz -C dist .
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: chip8-linux-x64.tar.gz
