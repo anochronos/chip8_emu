@@ -19,11 +19,7 @@ class chip8{
     // program counter
     unsigned short pc;
 
-    // screen size of 64x32 saving the pixel state
-    // initializing it to 0 for all pixels off
-    unsigned char gfx[64 * 32];
-
-    bool drawFlag;
+    
 
     // timer registers
     unsigned char delay_timer;
@@ -35,8 +31,7 @@ class chip8{
     // stack pointer
     unsigned short sp;
 
-    // store key state for the keypad
-    unsigned char key[16];
+    
     
     unsigned char keymap[16] =
     {
@@ -68,7 +63,18 @@ class chip8{
         };
 
 public:
+    // store key state for the keypad
+    unsigned char key[16];
+        
+    // screen size of 64x32 saving the pixel state
+    // initializing it to 0 for all pixels off
+    unsigned char gfx[64 * 32];
+    bool drawFlag;
+
+    chip8();
+    ~chip8();
     void initialize();
+    void updateTimers();
     void emulateCycle();
     void loadGame(chip8&, const char*);
 };
