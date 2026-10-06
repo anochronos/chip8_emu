@@ -77,4 +77,6 @@ public:
     void updateTimers();
     void emulateCycle();
     void loadGame(chip8&, const char*);
+    unsigned char getV(int i) const { return V[i]; }
+    unsigned short getPC() const { return pc; }
 };
