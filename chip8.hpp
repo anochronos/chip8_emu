@@ -1,0 +1,62 @@
+#pragma once
+
+class chip8{
+
+    // 35 opcodes of length 2 bytes
+    unsigned short opcode;
+
+    // total memory is 4k
+    unsigned char memory[4096];
+
+    // 16 registers 
+    unsigned char V[16];
+
+    // index register
+    unsigned short I;
+
+    // program counter
+    unsigned short pc;
+
+    // screen size of 64x32 saving the pixel state
+    // initializing it to 0 for all pixels off
+    unsigned char gfx[64 * 32];
+
+    // timer registers
+    unsigned char delay_timer;
+    unsigned char sound_timer;
+
+    // stack
+    unsigned short stack[16];
+
+    // stack pointer
+    unsigned short sp;
+
+    // store key state for the keypad
+    unsigned char key[16];
+
+    // fontset
+    unsigned char chip8_fontset[80] =
+        { 
+        0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+        0x20, 0x60, 0x20, 0x20, 0x70, // 1
+        0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+        0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+        0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+        0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+        0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+        0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+        0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+        0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+        0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+        0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+        0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+        0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+        };
+
+public:
+    void initialize();
+    void emulateCycle();
+    void loadGame(chip8&, const char*);
+};
