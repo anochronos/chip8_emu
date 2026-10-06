@@ -173,10 +173,13 @@ void chip8::emulateCycle() {
                 break;
 
                 case 0x000E:
-                    
+                break;
 
                     
             }
+        
+        default:
+        break;
 
     }
 }
