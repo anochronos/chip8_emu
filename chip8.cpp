@@ -11,6 +11,9 @@ void clearVals(T (&arr)[N]) {
     std::fill(std::begin(arr), std::end(arr), T{});
 }
 
+chip8::chip8(){}
+
+chip8::~chip8(){}
 
 void chip8::initialize() {
     pc = START_ADD;         // counter starts at 0x200
@@ -19,8 +22,6 @@ void chip8::initialize() {
     sp = 0;                 // reset stack pointer
     
     clearVals(gfx);        // clear display by setting all pixels to 0
-    drawFlag = false;
-
     clearVals(stack);      // clear stack
     clearVals(V);          // clear registers
     clearVals(memory);     // clear memory
@@ -33,12 +34,19 @@ void chip8::initialize() {
 
     delay_timer = 0;
     sound_timer = 0;
+    drawFlag = true;
 
     srand(time(nullptr));
 }
 
+void chip8::updateTimers() {
+       if (delay_timer > 0) --delay_timer;
+       if (sound_timer > 0) --sound_timer;
+   }
+
 void chip8::loadGame(chip8& chip, const char* path) {
     // opening file
+    initialize();
     FILE* f = fopen(path, "rb");                                
     if (f == nullptr) {
         throw std::runtime_error("could not open ROM file");
@@ -66,6 +74,7 @@ void chip8::emulateCycle() {
             {
                 case 0x0000:
                     clearVals(gfx);
+                    drawFlag = true;
                     pc += 2;
                 break;
 
@@ -99,8 +108,17 @@ void chip8::emulateCycle() {
             }
         break;
 
-        case 0x5000:
+        case 0x4000:
             if(V[(opcode & 0x0F00) >> 8] != (opcode & 0x00FF)){
+                pc += 4;
+            }
+            else {
+                pc += 2;
+            }
+        break;
+
+        case 0x5000:
+            if(V[(opcode & 0x0F00) >> 8] == V[(opcode & 0x00F0) >> 4]){
                 pc += 4;
             }
             else {
@@ -243,6 +261,7 @@ void chip8::emulateCycle() {
 
             drawFlag = true;
             pc += 2;
+        break;
         }
 
         case 0xE000:
