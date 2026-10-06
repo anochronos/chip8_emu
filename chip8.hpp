@@ -23,6 +23,8 @@ class chip8{
     // initializing it to 0 for all pixels off
     unsigned char gfx[64 * 32];
 
+    bool drawFlag;
+
     // timer registers
     unsigned char delay_timer;
     unsigned char sound_timer;
@@ -35,6 +37,14 @@ class chip8{
 
     // store key state for the keypad
     unsigned char key[16];
+    
+    unsigned char keymap[16] =
+    {
+        'x', '1', '2', '3',
+        'q', 'w', 'e', 'a',
+        's', 'd', 'z', 'c',
+        '4', 'r', 'f', 'v'
+    };
 
     // fontset
     unsigned char chip8_fontset[80] =
